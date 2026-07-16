@@ -43,6 +43,12 @@ def reset_caches(monkeypatch):
     monkeypatch.setattr(client_mod, "_group_cache_at", 0.0)
 
 
+@pytest.fixture(autouse=True)
+def isolate_receive_lock(monkeypatch, tmp_path):
+    """Keep the real background watcher from short-circuiting daemon tests."""
+    monkeypatch.setattr(client_mod, "RECEIVE_LOCK_FILE", tmp_path / "receive.lock")
+
+
 @pytest.fixture
 def client():
     return SignalClient(account="+10000000000")
